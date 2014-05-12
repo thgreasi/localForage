@@ -3,6 +3,10 @@
 This file will include all API breakage, new features, and upgrade info in
 localForage's lifetime.
 
+### [Version 0.8.0](https://github.com/mozilla/localForage/releases/tag/0.8.0)
+
+* Add support for web workers. ([#144](https://github.com/mozilla/localForage/pull/144), [#147](https://github.com/mozilla/localForage/pull/147)).
+
 ### [Version 0.6.1](https://github.com/mozilla/localForage/releases/tag/0.6.1)
 
 * Put built versions back in `dist/` directory.
