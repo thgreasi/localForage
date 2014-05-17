@@ -9,6 +9,11 @@ var sourceFiles = [
     'test/**/test.*.js'
 ];
 
+var testURLs = [
+    'http://localhost:9999/test/test.main.html',
+    'http://localhost:9999/test/test.component.html'
+];
+
 module.exports = exports = function(grunt) {
     'use strict';
 
@@ -64,9 +69,7 @@ module.exports = exports = function(grunt) {
         mocha: {
             unit: {
                 options: {
-                    urls: [
-                        'http://localhost:9999/test/test.main.html'
-                    ]
+                    urls: testURLs
                 }
             }
         },
@@ -80,9 +83,7 @@ module.exports = exports = function(grunt) {
                 options: {
                     username: process.env.SAUCE_USERNAME,
                     key: process.env.SAUCE_ACCESS_KEY,
-                    urls: [
-                        'http://localhost:9999/test/test.main.html'
-                    ],
+                    urls: testURLs,
                     tunnelTimeout: 5,
                     build: process.env.TRAVIS_JOB_ID,
                     concurrency: 3,
@@ -123,7 +124,7 @@ module.exports = exports = function(grunt) {
             /*jshint scripturl:true */
             'mocha:unit': {
                 files: ['dist/localforage.js', 'test/test.*.*', ],
-                tasks: ['jshint', 'jscs', 'mocha:unit']
+                tasks: ['jshint', 'jscs', 'shell:component', 'mocha:unit']
             }
         }
     });
