@@ -1901,6 +1901,7 @@ requireModule('promise/polyfill').polyfill();
                     this.msIndexedDB;
 
     var supportsIndexedDB = indexedDB &&
+                            indexedDB.open &&
                             indexedDB.open('_localforage_spec_test', 1)
                                      .onupgradeneeded === null;
 
@@ -1957,12 +1958,13 @@ requireModule('promise/polyfill').polyfill();
             return this._driver || null;
         },
 
-        _ready: Promise.reject(new Error("setDriver() wasn't called")),
+        _ready: false,
 
         setDriver: function(driverName, callback, errorCallback) {
             var self = this;
             return new Promise(function(resolve, reject) {
                 if ((!supportsIndexedDB && driverName === self.INDEXEDDB) ||
+                    (!localStorage && driverName === self.LOCALSTORAGE) ||
                     (!openDatabase && driverName === self.WEBSQL)) {
                     if (errorCallback) {
                         errorCallback();
@@ -1974,8 +1976,8 @@ requireModule('promise/polyfill').polyfill();
 
                 self._ready = null;
 
-                // We allow localForage to be declared as a module or as a library
-                // available without AMD/require.js.
+                // We allow localForage to be declared as a module or as a
+                // library available without AMD/require.js.
                 if (moduleType === MODULE_TYPE_DEFINE) {
                     require([driverName], function(lib) {
                         self._extend(lib);
