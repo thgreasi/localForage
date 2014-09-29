@@ -1,4 +1,4 @@
-/* global afterEach:true, before:true, beforeEach:true, describe:true, expect:true, it:true, Modernizr:true, Promise:true, require:true */
+/* global after:true, afterEach:true, before:true, beforeEach:true, describe:true, expect:true, it:true, Modernizr:true, Promise:true, require:true */
 var DRIVERS = [
     localforage.INDEXEDDB,
     localforage.LOCALSTORAGE,
@@ -74,10 +74,11 @@ describe('localForage', function() {
     });
 });
 
-DRIVERS.forEach(function(driverName) {
+DRIVERS.concat('FAILING' + localforage.WEBSQL).forEach(function(driverName) {
     if ((!Modernizr.indexeddb && driverName === localforage.INDEXEDDB) ||
         (!Modernizr.localstorage && driverName === localforage.LOCALSTORAGE) ||
-        (!Modernizr.websqldatabase && driverName === localforage.WEBSQL)) {
+        (!Modernizr.websqldatabase && driverName === localforage.WEBSQL) ||
+        (driverName === 'FAILING' + localforage.WEBSQL && !(Modernizr.websqldatabase && Modernizr.localstorage))) {
         // Browser doesn't support this storage library, so we exit the API
         // tests.
         return;
@@ -86,7 +87,17 @@ DRIVERS.forEach(function(driverName) {
     describe(driverName + ' driver', function() {
         'use strict';
 
+        var _openDatabase = window.openDatabase;
+        var testCaseDriverName = driverName;
+
         before(function(done) {
+            if (driverName === 'FAILING' + localforage.WEBSQL) {
+                _openDatabase = window.openDatabase;
+                window.openDatabase = function() {
+                    throw new Error('Failed to open Database');
+                };
+                driverName = localforage.WEBSQL;
+            }
             localforage.setDriver(driverName).then(done);
         });
 
@@ -119,14 +130,20 @@ DRIVERS.forEach(function(driverName) {
             expect(localforage.createInstance).to.be.a('function');
         });
 
-        // Make sure we don't support bogus drivers.
-        it('supports ' + driverName + ' database driver', function() {
-            expect(localforage.supports(driverName) === true);
-            expect(localforage.supports('I am not a driver') === false);
-        });
+        if (DRIVERS.indexOf(driverName) >= 0) {
+            // Make sure we don't support bogus drivers.
+            it('supports ' + driverName + ' database driver', function() {
+                expect(localforage.supports(driverName) === true);
+                expect(localforage.supports('I am not a driver') === false);
+            });
+        }
 
         it('sets the right database driver', function() {
-            expect(localforage.driver() === driverName);
+            if (driverName === 'FAILING' + localforage.WEBSQL) {
+                expect(localforage.driver() === localforage.LOCALSTORAGE);
+            } else {
+                expect(localforage.driver() === driverName);
+            }
         });
 
         it('has an empty length by default', function(done) {
@@ -385,6 +402,12 @@ DRIVERS.forEach(function(driverName) {
                 done();
             });
         });
+
+        after(function() {
+            if (testCaseDriverName === 'FAILING' + localforage.WEBSQL) {
+                window.openDatabase = _openDatabase;
+            }
+        });
     });
 
     
@@ -393,8 +416,19 @@ DRIVERS.forEach(function(driverName) {
         var localforage2 = null;
         var Promise;
 
+        var _openDatabase = window.openDatabase;
+        var testCaseDriverName = driverName;
+
         before(function(done) {
             Promise = window.Promise || require('promise');
+
+            if (driverName === 'FAILING' + localforage.WEBSQL) {
+                _openDatabase = window.openDatabase;
+                window.openDatabase = function() {
+                    throw new Error('Failed to open Database');
+                };
+                driverName = localforage.WEBSQL;
+            }
 
             localforage2 = localforage.createInstance({
                 name: 'storage2',
@@ -463,9 +497,19 @@ DRIVERS.forEach(function(driverName) {
                 done(new Error(errors));
             });
         });
+
+        after(function() {
+            if (testCaseDriverName === 'FAILING' + localforage.WEBSQL) {
+                window.openDatabase = _openDatabase;
+            }
+        });
     });
 
-    describe(driverName + ' driver', function() {
+    if (DRIVERS.indexOf(driverName) < 0) {
+        return;
+    }
+
+    describe(driverName + ' driver driver order', function() {
         'use strict';
 
         var driverPreferedOrder;
@@ -500,6 +544,10 @@ DRIVERS.forEach(function(driverName) {
 
     describe(driverName + ' driver when the callback throws an Error', function() {
         'use strict';
+
+        before(function(done) {
+            localforage.setDriver(driverName).then(done);
+        });
         
         var testObj = {
             throwFunc: function() {
@@ -568,6 +616,10 @@ DRIVERS.forEach(function(driverName) {
         'use strict';
 
         var _oldReady;
+
+        before(function(done) {
+            localforage.setDriver(driverName).then(done);
+        });
 
         beforeEach(function(done) {
             _oldReady = localforage.ready;
