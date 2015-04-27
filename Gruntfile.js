@@ -20,6 +20,23 @@ module.exports = exports = function(grunt) {
                  '*/\n';
 
     grunt.initConfig({
+        babel: {
+            options: {
+                loose: 'all',
+                modules: 'umd'
+            },
+            dist: {
+                files: {
+                    // 'dist/localforage.js': 'dist/localforage.js',
+                    // 'dist/localforage.nopromises.js': 'dist/localforage.nopromises.js'
+                    'dist/es5src/localforage.js': 'src/localforage.js',
+                    'dist/es5src/utils/serializer.js': 'src/utils/serializer.js',
+                    'dist/es5src/drivers/indexeddb.js': 'src/drivers/indexeddb.js',
+                    'dist/es5src/drivers/localstorage.js': 'src/drivers/localstorage.js',
+                    'dist/es5src/drivers/websql.js': 'src/drivers/websql.js'
+                }
+            }
+        },
         concat: {
             options: {
                 separator: ''
@@ -29,14 +46,14 @@ module.exports = exports = function(grunt) {
                     'dist/localforage.js': [
                         // https://github.com/jakearchibald/es6-promise
                         'bower_components/es6-promise/promise.js',
-                        'src/utils/**/*.js',
-                        'src/drivers/**/*.js',
-                        'src/localforage.js'
+                        'dist/es5src/utils/**/*.js',
+                        'dist/es5src/drivers/**/*.js',
+                        'dist/es5src/localforage.js'
                     ],
                     'dist/localforage.nopromises.js': [
-                        'src/utils/**/*.js',
-                        'src/drivers/**/*.js',
-                        'src/localforage.js'
+                        'dist/es5src/utils/**/*.js',
+                        'dist/es5src/drivers/**/*.js',
+                        'dist/es5src/localforage.js'
                     ]
                 },
                 options: {
@@ -173,7 +190,7 @@ module.exports = exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
 
     grunt.registerTask('default', ['build', 'connect', 'watch']);
-    grunt.registerTask('build', ['concat', 'es3_safe_recast', 'uglify']);
+    grunt.registerTask('build', ['babel', 'concat', 'es3_safe_recast', 'uglify']);
     grunt.registerTask('publish', ['build', 'shell:publish-site']);
     grunt.registerTask('serve', ['build', 'connect:test', 'watch']);
     grunt.registerTask('site', ['shell:serve-site']);
