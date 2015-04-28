@@ -218,13 +218,14 @@
         bufferToString: bufferToString
     };
 
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
-        module.exports = localforageSerializer;
-    } else if (typeof define === 'function' && define.amd) {
-        define('localforageSerializer', function() {
-            return localforageSerializer;
-        });
-    } else {
-        this.localforageSerializer = localforageSerializer;
-    }
+    export default localforageSerializer;
+    // if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
+    //     module.exports = localforageSerializer;
+    // } else if (typeof define === 'function' && define.amd) {
+    //     define('localforageSerializer', function() {
+    //         return localforageSerializer;
+    //     });
+    // } else {
+    //     this.localforageSerializer = localforageSerializer;
+    // }
 }).call(window);

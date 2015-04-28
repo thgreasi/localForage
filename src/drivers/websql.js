@@ -11,11 +11,14 @@
     'use strict';
 
     // Promises!
-    var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
-                  require('promise') : this.Promise;
+    // var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
+    //               require('promise') : this.Promise;
+    import Promise from 'Promise';
+    // var Promise = promise || this.Promise;
+    import serializer from './../utils/serializer';
 
-    var globalObject = this;
-    var serializer = null;
+    // var globalObject = this;
+    // var serializer = null;
     var openDatabase = this.openDatabase;
 
     // If WebSQL methods aren't available, we can stop now.
@@ -23,23 +26,23 @@
         return;
     }
 
-    var ModuleType = {
-        DEFINE: 1,
-        EXPORT: 2,
-        WINDOW: 3
-    };
+    // var ModuleType = {
+    //     DEFINE: 1,
+    //     EXPORT: 2,
+    //     WINDOW: 3
+    // };
 
-    // Attaching to window (i.e. no module loader) is the assumed,
-    // simple default.
-    var moduleType = ModuleType.WINDOW;
+    // // Attaching to window (i.e. no module loader) is the assumed,
+    // // simple default.
+    // var moduleType = ModuleType.WINDOW;
 
-    // Find out what kind of module setup we have; if none, we'll just attach
-    // localForage to the main window.
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
-        moduleType = ModuleType.EXPORT;
-    } else if (typeof define === 'function' && define.amd) {
-        moduleType = ModuleType.DEFINE;
-    }
+    // // Find out what kind of module setup we have; if none, we'll just attach
+    // // localForage to the main window.
+    // if (typeof globalObject.module !== 'undefined' && globalObject.module.exports  && typeof globalObject.require !== 'undefined') {
+    //     moduleType = ModuleType.EXPORT;
+    // } else if (typeof globalObject.define === 'function' && globalObject.define.amd) {
+    //     moduleType = ModuleType.DEFINE;
+    // }
 
     // Open the WebSQL database (automatically creates one if one didn't
     // previously exist), using any options set in the config.
@@ -56,18 +59,18 @@
             }
         }
 
-        var serializerPromise = new Promise(function(resolve/*, reject*/) {
-            // We allow localForage to be declared as a module or as a
-            // library available without AMD/require.js.
-            if (moduleType === ModuleType.DEFINE) {
-                require(['localforageSerializer'], resolve);
-            } else if (moduleType === ModuleType.EXPORT) {
-                // Making it browserify friendly
-                resolve(require('./../utils/serializer'));
-            } else {
-                resolve(globalObject.localforageSerializer);
-            }
-        });
+        // var serializerPromise = new Promise(function(resolve/*, reject*/) {
+        //     // We allow localForage to be declared as a module or as a
+        //     // library available without AMD/require.js.
+        //     if (moduleType === ModuleType.DEFINE) {
+        //         require(['localforageSerializer'], resolve);
+        //     } else if (moduleType === ModuleType.EXPORT) {
+        //         // Making it browserify friendly
+        //         resolve(require('./../utils/localforageSerializer'));
+        //     } else {
+        //         resolve(globalObject.localforageSerializer);
+        //     }
+        // });
 
         var dbInfoPromise = new Promise(function(resolve, reject) {
             // Open the database; the openDatabase API will automatically
@@ -94,10 +97,11 @@
             });
         });
 
-        return serializerPromise.then(function(lib) {
-            serializer = lib;
-            return dbInfoPromise;
-        });
+        // return serializerPromise.then(function(lib) {
+        //     serializer = lib;
+        //     return dbInfoPromise;
+        // });
+        return dbInfoPromise;
     }
 
     function getItem(key, callback) {
@@ -405,13 +409,15 @@
         keys: keys
     };
 
-    if (moduleType === ModuleType.DEFINE) {
-        define('webSQLStorage', function() {
-            return webSQLStorage;
-        });
-    } else if (moduleType === ModuleType.EXPORT) {
-        module.exports = webSQLStorage;
-    } else {
-        this.webSQLStorage = webSQLStorage;
-    }
+    export default webSQLStorage;
+
+    // if (moduleType === ModuleType.DEFINE) {
+    //     define('webSQLStorage', function() {
+    //         return webSQLStorage;
+    //     });
+    // } else if (moduleType === ModuleType.EXPORT) {
+    //     module.exports = webSQLStorage;
+    // } else {
+    //     this.webSQLStorage = webSQLStorage;
+    // }
 }).call(window);
