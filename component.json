@@ -6,10 +6,10 @@
   },
   "scripts": [
     "dist/es5src/localforage.js",
-    "dist/es5src/utils/serializer.js",
-    "dist/es5src/drivers/indexeddb.js",
-    "dist/es5src/drivers/localstorage.js",
-    "dist/es5src/drivers/websql.js"
+    "dist/es5src/utils/localforageSerializer.js",
+    "dist/es5src/drivers/asyncStorage.js",
+    "dist/es5src/drivers/localStorageWrapper.js",
+    "dist/es5src/drivers/webSQLStorage.js"
   ],
   "main": "dist/es5src/localforage.js"
 }

@@ -15,10 +15,11 @@
     //               require('promise') : this.Promise;
     import Promise from 'Promise';
     // var Promise = promise || this.Promise;
-    import serializer from './../utils/serializer';
+    import localforageSerializer from './../utils/localforageSerializer';
 
     // var globalObject = this;
     // var serializer = null;
+    var serializer = localforageSerializer;
     var openDatabase = this.openDatabase;
 
     // If WebSQL methods aren't available, we can stop now.

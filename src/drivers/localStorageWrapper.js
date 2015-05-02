@@ -10,10 +10,11 @@
     //               require('promise') : this.Promise;
     import Promise from 'Promise';
     // var Promise = promise || this.Promise;
-    import serializer from './../utils/serializer';
+    import localforageSerializer from './../utils/localforageSerializer';
 
     // var globalObject = this;
     // var serializer = null;
+    var serializer = localforageSerializer;
     var localStorage = null;
 
     // If the app is running inside a Google Chrome packaged webapp, or some

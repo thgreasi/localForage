@@ -30,10 +30,14 @@ module.exports = exports = function(grunt) {
                     // 'dist/localforage.js': 'dist/localforage.js',
                     // 'dist/localforage.nopromises.js': 'dist/localforage.nopromises.js'
                     'dist/es5src/localforage.js': 'src/localforage.js',
-                    'dist/es5src/utils/serializer.js': 'src/utils/serializer.js',
-                    'dist/es5src/drivers/indexeddb.js': 'src/drivers/indexeddb.js',
-                    'dist/es5src/drivers/localstorage.js': 'src/drivers/localstorage.js',
-                    'dist/es5src/drivers/websql.js': 'src/drivers/websql.js'
+                    // 'dist/es5src/utils/serializer.js': 'src/utils/serializer.js',
+                    'dist/es5src/utils/localforageSerializer.js': 'src/utils/localforageSerializer.js',
+                    // 'dist/es5src/drivers/indexeddb.js': 'src/drivers/indexeddb.js',
+                    // 'dist/es5src/drivers/localstorage.js': 'src/drivers/localstorage.js',
+                    // 'dist/es5src/drivers/websql.js': 'src/drivers/websql.js'
+                    'dist/es5src/drivers/asyncStorage.js': 'src/drivers/asyncStorage.js',
+                    'dist/es5src/drivers/localStorageWrapper.js': 'src/drivers/localStorageWrapper.js',
+                    'dist/es5src/drivers/webSQLStorage.js': 'src/drivers/webSQLStorage.js'
                 }
             }
         },

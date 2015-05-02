@@ -52,7 +52,13 @@ var require = this.require;
 if (require) {
     requirejs.config({
         paths: {
-            localforage: '/dist/localforage'
+            localforage: '/dist/localforage',
+            Promise: '/bower_components/es6-promise/promise'
+            // localforage: '/dist/es5src/localforage',
+            // localforageSerializer: '/dist/es5src/utils/localforageSerializer',
+            // asyncStorage: '/dist/es5src/drivers/asyncStorage',
+            // localStorageWrapper: '/dist/es5src/drivers/localStorageWrapper',
+            // webSQLStorage: '/dist/es5src/drivers/webSQLStorage'
         }
     });
     require(['localforage'], function(localforage) {
