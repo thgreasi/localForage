@@ -8,9 +8,9 @@
     // Promises!
     // var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
     //               require('promise') : this.Promise;
-    import Promise from 'Promise';
-    // var Promise = promise || this.Promise;
-    import localforageSerializer from './../utils/localforageSerializer';
+    import promise from 'Promise';
+    var Promise = promise || this.Promise;
+    import localforageSerializer from 'localforageSerializer'; // ./../utils/localforageSerializer
 
     // var globalObject = this;
     // var serializer = null;

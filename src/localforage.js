@@ -4,8 +4,8 @@
     // Promises!
     // var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
     //               require('promise') : this.Promise;
-    import Promise from 'Promise';
-    // var Promise = promise || this.Promise;
+    import promise from 'Promise';
+    var Promise = promise || this.Promise;
 
     var globalObject = this;
 

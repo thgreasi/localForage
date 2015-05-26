@@ -8,8 +8,8 @@
     // Promises!
     // var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
     //               require('promise') : this.Promise;
-    import Promise from 'Promise';
-    // var Promise = promise || this.Promise;
+    import promise from 'Promise';
+    var Promise = promise || this.Promise;
 
     // Initialize IndexedDB; fall back to vendor-prefixed versions if needed.
     var indexedDB = indexedDB || this.indexedDB || this.webkitIndexedDB ||
