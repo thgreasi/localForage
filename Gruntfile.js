@@ -22,7 +22,20 @@ module.exports = exports = function(grunt) {
     grunt.initConfig({
         babel: {
             options: {
-                loose: 'all'
+                loose: 'all',
+                modules: 'umd',
+                moduleIds: true,
+                getModuleId: function(moduleName) {
+                    var files = {
+                        'src/localforage': 'localforage',
+                        'src/utils/serializer': 'localforageSerializer',
+                        'src/drivers/indexeddb': 'asyncStorage',
+                        'src/drivers/localstorage': 'localStorageWrapper',
+                        'src/drivers/websql': 'webSQLStorage'
+                    };
+
+                    return files[moduleName] || moduleName.replace('src/', '');
+                }
             },
             dist: {
                 files: {
@@ -56,8 +69,7 @@ module.exports = exports = function(grunt) {
                     ]
                 },
                 options: {
-                    banner: BANNER + '(function(){',
-                    footer: '})();'
+                    banner: BANNER
                 }
             }
         },

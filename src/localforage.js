@@ -1,9 +1,11 @@
 (function() {
     'use strict';
 
+    var globalObject = this;
+
     // Promises!
-    var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
-                  require('promise') : this.Promise;
+    var Promise = (typeof globalObject.module !== 'undefined' && globalObject.module.exports && typeof globalObject.require !== 'undefined') ?
+                  globalObject.require('promise') : this.Promise;
 
     // Custom drivers are stored here when `defineDriver()` is called.
     // They are shared across all instances of localForage.
@@ -55,9 +57,9 @@
 
     // Find out what kind of module setup we have; if none, we'll just attach
     // localForage to the main window.
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
+    if (typeof globalObject.module !== 'undefined' && globalObject.module.exports && typeof globalObject.require !== 'undefined') {
         moduleType = ModuleType.EXPORT;
-    } else if (typeof define === 'function' && define.amd) {
+    } else if (typeof globalObject.define === 'function' && globalObject.define.amd) {
         moduleType = ModuleType.DEFINE;
     }
 
@@ -161,8 +163,6 @@
 
         return false;
     }
-
-    var globalObject = this;
 
     class LocalForage {
         constructor(options) {
@@ -329,18 +329,18 @@
                         // We allow localForage to be declared as a module or as a
                         // library available without AMD/require.js.
                         if (moduleType === ModuleType.DEFINE) {
-                            require([driverName], resolve);
+                            globalObject.require([driverName], resolve);
                         } else if (moduleType === ModuleType.EXPORT) {
                             // Making it browserify friendly
                             switch (driverName) {
                                 case self.INDEXEDDB:
-                                    resolve(require('./drivers/indexeddb'));
+                                    resolve(globalObject.require('./drivers/indexeddb'));
                                     break;
                                 case self.LOCALSTORAGE:
-                                    resolve(require('./drivers/localstorage'));
+                                    resolve(globalObject.require('./drivers/localstorage'));
                                     break;
                                 case self.WEBSQL:
-                                    resolve(require('./drivers/websql'));
+                                    resolve(globalObject.require('./drivers/websql'));
                                     break;
                             }
                         } else {
@@ -402,15 +402,16 @@
     // global. It's extended by pulling in one of our other libraries.
     var localForage = new LocalForage();
 
-    // We allow localForage to be declared as a module or as a library
-    // available without AMD/require.js.
-    if (moduleType === ModuleType.DEFINE) {
-        define('localforage', function() {
-            return localForage;
-        });
-    } else if (moduleType === ModuleType.EXPORT) {
-        module.exports = localForage;
-    } else {
-        this.localforage = localForage;
-    }
+    export default localForage;
+    // // We allow localForage to be declared as a module or as a library
+    // // available without AMD/require.js.
+    // if (moduleType === ModuleType.DEFINE) {
+    //     define('localforage', function() {
+    //         return localForage;
+    //     });
+    // } else if (moduleType === ModuleType.EXPORT) {
+    //     module.exports = localForage;
+    // } else {
+    //     this.localforage = localForage;
+    // }
 }).call(window);

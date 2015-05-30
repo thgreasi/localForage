@@ -10,11 +10,12 @@
 (function() {
     'use strict';
 
-    // Promises!
-    var Promise = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ?
-                  require('promise') : this.Promise;
-
     var globalObject = this;
+
+    // Promises!
+    var Promise = (typeof globalObject.module !== 'undefined' && globalObject.module.exports && typeof globalObject.require !== 'undefined') ?
+                  globalObject.require('promise') : this.Promise;
+
     var serializer = null;
     var openDatabase = this.openDatabase;
 
@@ -35,9 +36,9 @@
 
     // Find out what kind of module setup we have; if none, we'll just attach
     // localForage to the main window.
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
+    if (typeof globalObject.module !== 'undefined' && globalObject.module.exports && typeof globalObject.require !== 'undefined') {
         moduleType = ModuleType.EXPORT;
-    } else if (typeof define === 'function' && define.amd) {
+    } else if (typeof globalObject.define === 'function' && define.amd) {
         moduleType = ModuleType.DEFINE;
     }
 
@@ -60,10 +61,10 @@
             // We allow localForage to be declared as a module or as a
             // library available without AMD/require.js.
             if (moduleType === ModuleType.DEFINE) {
-                require(['localforageSerializer'], resolve);
+                globalObject.require(['localforageSerializer'], resolve);
             } else if (moduleType === ModuleType.EXPORT) {
                 // Making it browserify friendly
-                resolve(require('./../utils/serializer'));
+                resolve(globalObject.require('./../utils/serializer'));
             } else {
                 resolve(globalObject.localforageSerializer);
             }
@@ -405,13 +406,14 @@
         keys: keys
     };
 
-    if (moduleType === ModuleType.DEFINE) {
-        define('webSQLStorage', function() {
-            return webSQLStorage;
-        });
-    } else if (moduleType === ModuleType.EXPORT) {
-        module.exports = webSQLStorage;
-    } else {
-        this.webSQLStorage = webSQLStorage;
-    }
+    export default webSQLStorage;
+    // if (moduleType === ModuleType.DEFINE) {
+    //     define('webSQLStorage', function() {
+    //         return webSQLStorage;
+    //     });
+    // } else if (moduleType === ModuleType.EXPORT) {
+    //     module.exports = webSQLStorage;
+    // } else {
+    //     this.webSQLStorage = webSQLStorage;
+    // }
 }).call(window);
