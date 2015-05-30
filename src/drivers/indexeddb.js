@@ -573,13 +573,4 @@
     };
 
     export default asyncStorage;
-    // if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
-    //     module.exports = asyncStorage;
-    // } else if (typeof define === 'function' && define.amd) {
-    //     define('asyncStorage', function() {
-    //         return asyncStorage;
-    //     });
-    // } else {
-    //     this.asyncStorage = asyncStorage;
-    // }
 }).call(window);

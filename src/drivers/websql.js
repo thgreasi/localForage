@@ -410,13 +410,4 @@
     };
 
     export default webSQLStorage;
-    // if (moduleType === ModuleType.DEFINE) {
-    //     define('webSQLStorage', function() {
-    //         return webSQLStorage;
-    //     });
-    // } else if (moduleType === ModuleType.EXPORT) {
-    //     module.exports = webSQLStorage;
-    // } else {
-    //     this.webSQLStorage = webSQLStorage;
-    // }
 }).call(window);

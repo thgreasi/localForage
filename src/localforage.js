@@ -67,18 +67,6 @@
         version: 1.0
     };
 
-    // Attaching to window (i.e. no module loader) is the assumed,
-    // simple default.
-    var moduleType = ModuleType.WINDOW;
-
-    // Find out what kind of module setup we have; if none, we'll just attach
-    // localForage to the main window.
-    if (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') {
-        moduleType = ModuleType.EXPORT;
-    } else if (typeof define === 'function' && define.amd) {
-        moduleType = ModuleType.DEFINE;
-    }
-
     // Check to see if IndexedDB is available and if it is the latest
     // implementation; it's our preferred backend library. We use "_spec_test"
     // as the name of the database because it's not the one we'll operate on,
@@ -179,8 +167,6 @@
 
         return false;
     }
-
-    var globalObject = this;
 
     class LocalForage {
         constructor(options) {
@@ -347,7 +333,7 @@
                         // We allow localForage to be declared as a module or as a
                         // library available without AMD/require.js.
                         if (moduleType === ModuleType.DEFINE) {
-                            require([driverName], resolve);
+                            globalObject.require([driverName], resolve);
                         } else if (moduleType === ModuleType.EXPORT) {
                             // Making it browserify friendly
                             switch (driverName) {
@@ -420,15 +406,5 @@
     // global. It's extended by pulling in one of our other libraries.
     var localForage = new LocalForage();
 
-    // We allow localForage to be declared as a module or as a library
-    // available without AMD/require.js.
-    if (moduleType === ModuleType.DEFINE) {
-        define('localforage', function() {
-            return localForage;
-        });
-    } else if (moduleType === ModuleType.EXPORT) {
-        module.exports = localForage;
-    } else {
-        this.localforage = localForage;
-    }
+    export default localForage;
 }).call(window);

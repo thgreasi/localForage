@@ -322,13 +322,4 @@
     };
 
     export default localStorageWrapper;
-    // if (moduleType === ModuleType.EXPORT) {
-    //     module.exports = localStorageWrapper;
-    // } else if (moduleType === ModuleType.DEFINE) {
-    //     define('localStorageWrapper', function() {
-    //         return localStorageWrapper;
-    //     });
-    // } else {
-    //     this.localStorageWrapper = localStorageWrapper;
-    // }
 }).call(window);
