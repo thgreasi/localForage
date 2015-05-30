@@ -5,14 +5,15 @@
 (function() {
     'use strict';
 
-    // var globalObject = this;
+    var globalObject = this;
 
     // Promises!
     // var Promise = (typeof globalObject.module !== 'undefined' && globalObject.module.exports && typeof globalObject.require !== 'undefined') ?
     //              globalObject.require('promise') : this.Promise;
-    import Promise from 'Promise';
-    // var Promise = promise || this.Promise;
-    import serializer from './../utils/serializer';
+    import promise from 'Promise';
+    var Promise = promise || globalObject.Promise;
+    import serializer from 'localforageSerializer';
+    // import serializer from './../utils/serializer';
 
     // var serializer = null;
     var localStorage = null;

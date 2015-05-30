@@ -6,8 +6,8 @@
     // Promises!
     // var Promise = (typeof globalObject.module !== 'undefined' && globalObject.module.exports && typeof globalObject.require !== 'undefined') ?
     //               globalObject.require('promise') : this.Promise;
-    import Promise from 'Promise';
-    // var Promise = promise || this.Promise;
+    import promise from 'Promise';
+    var Promise = promise || globalObject.Promise;
 
     // Custom drivers are stored here when `defineDriver()` is called.
     // They are shared across all instances of localForage.
