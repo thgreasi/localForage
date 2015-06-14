@@ -935,20 +935,17 @@
 
             self._dbInfo = dbInfo;
 
-            var serializerPromise = new Promise(function (resolve /*, reject*/) {
-                // We allow localForage to be declared as a module or as a
-                // library available without AMD/require.js.
-                if (moduleType === ModuleType.DEFINE) {
-                    globalObject.require(['localforageSerializer'], resolve);
-                } else if (moduleType === ModuleType.EXPORT) {
-                    // Making it browserify friendly
+            return new Promise(function (resolve, reject) {
+                var global = window;
+
+                if (typeof global.define === 'function' && global.define.amd) {
+                    global.require(['localforageSerializer'], resolve, reject);
+                } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
                     resolve(require('./../utils/serializer'));
                 } else {
-                    resolve(globalObject.localforageSerializer);
+                    resolve(global['localforageSerializer']);
                 }
-            });
-
-            return serializerPromise.then(function (lib) {
+            }).then(function (lib) {
                 serializer = lib;
                 return Promise.resolve();
             });
@@ -1263,19 +1260,6 @@
                 }
             }
 
-            var serializerPromise = new Promise(function (resolve /*, reject*/) {
-                // We allow localForage to be declared as a module or as a
-                // library available without AMD/require.js.
-                if (moduleType === ModuleType.DEFINE) {
-                    globalObject.require(['localforageSerializer'], resolve);
-                } else if (moduleType === ModuleType.EXPORT) {
-                    // Making it browserify friendly
-                    resolve(require('./../utils/serializer'));
-                } else {
-                    resolve(globalObject.localforageSerializer);
-                }
-            });
-
             var dbInfoPromise = new Promise(function (resolve, reject) {
                 // Open the database; the openDatabase API will automatically
                 // create it for us if it doesn't exist.
@@ -1298,7 +1282,17 @@
                 });
             });
 
-            return serializerPromise.then(function (lib) {
+            return new Promise(function (resolve, reject) {
+                var global = window;
+
+                if (typeof global.define === 'function' && global.define.amd) {
+                    global.require(['localforageSerializer'], resolve, reject);
+                } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                    resolve(require('./../utils/serializer'));
+                } else {
+                    resolve(global['localforageSerializer']);
+                }
+            }).then(function (lib) {
                 serializer = lib;
                 return dbInfoPromise;
             });
@@ -1915,28 +1909,48 @@
                     self._ready = null;
 
                     if (isLibraryDriver(driverName)) {
-                        var driverPromise = new Promise(function (resolve /*, reject*/) {
-                            // We allow localForage to be declared as a module or as a
-                            // library available without AMD/require.js.
-                            if (moduleType === ModuleType.DEFINE) {
-                                globalObject.require([driverName], resolve);
-                            } else if (moduleType === ModuleType.EXPORT) {
-                                // Making it browserify friendly
-                                switch (driverName) {
-                                    case self.INDEXEDDB:
+                        var driverPromise;
+                        switch (driverName) {
+                            case self.INDEXEDDB:
+                                driverPromise = new Promise(function (resolve, reject) {
+                                    var global = window;
+
+                                    if (typeof global.define === 'function' && global.define.amd) {
+                                        global.require(['asyncStorage'], resolve, reject);
+                                    } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
                                         resolve(require('./drivers/indexeddb'));
-                                        break;
-                                    case self.LOCALSTORAGE:
+                                    } else {
+                                        resolve(global['asyncStorage']);
+                                    }
+                                });
+                                break;
+                            case self.LOCALSTORAGE:
+                                driverPromise = new Promise(function (resolve, reject) {
+                                    var global = window;
+
+                                    if (typeof global.define === 'function' && global.define.amd) {
+                                        global.require(['localStorageWrapper'], resolve, reject);
+                                    } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
                                         resolve(require('./drivers/localstorage'));
-                                        break;
-                                    case self.WEBSQL:
+                                    } else {
+                                        resolve(global['localStorageWrapper']);
+                                    }
+                                });
+                                break;
+                            case self.WEBSQL:
+                                driverPromise = new Promise(function (resolve, reject) {
+                                    var global = window;
+
+                                    if (typeof global.define === 'function' && global.define.amd) {
+                                        global.require(['webSQLStorage'], resolve, reject);
+                                    } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
                                         resolve(require('./drivers/websql'));
-                                        break;
-                                }
-                            } else {
-                                resolve(globalObject[driverName]);
-                            }
-                        });
+                                    } else {
+                                        resolve(global['webSQLStorage']);
+                                    }
+                                });
+                                break;
+                        }
                         driverPromise.then(function (driver) {
                             self._extend(driver);
                             resolve();
