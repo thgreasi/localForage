@@ -11,6 +11,10 @@
         global.webSQLStorage = mod.exports;
     }
 })(this, function (exports, module) {
+    'use strict';
+
+    var _systemImportTransformerModuleTypeHelper = (function (global) { return typeof global.define === 'function' && global.define.amd ? 1 : typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component')) ? 2 : 3; })(window);
+
     /*
      * Includes code from:
      *
@@ -20,8 +24,6 @@
      * Copyright (c) 2012 Niklas von Hertzen
      * Licensed under the MIT license.
      */
-    'use strict';
-
     (function () {
         'use strict';
 
@@ -98,9 +100,9 @@
             return new Promise(function (resolve, reject) {
                 var global = window;
 
-                if (typeof global.define === 'function' && global.define.amd) {
+                if (_systemImportTransformerModuleTypeHelper === 1) {
                     global.require(['localforageSerializer'], resolve, reject);
-                } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                } else if (_systemImportTransformerModuleTypeHelper === 2) {
                     resolve(require('./../utils/serializer'));
                 } else {
                     resolve(global['localforageSerializer']);

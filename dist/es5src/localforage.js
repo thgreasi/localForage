@@ -13,6 +13,8 @@
 })(this, function (exports, module) {
     'use strict';
 
+    var _systemImportTransformerModuleTypeHelper = (function (global) { return typeof global.define === 'function' && global.define.amd ? 1 : typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component')) ? 2 : 3; })(window);
+
     function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
     (function () {
@@ -325,9 +327,9 @@
                                 driverPromise = new Promise(function (resolve, reject) {
                                     var global = window;
 
-                                    if (typeof global.define === 'function' && global.define.amd) {
+                                    if (_systemImportTransformerModuleTypeHelper === 1) {
                                         global.require(['asyncStorage'], resolve, reject);
-                                    } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                                    } else if (_systemImportTransformerModuleTypeHelper === 2) {
                                         resolve(require('./drivers/indexeddb'));
                                     } else {
                                         resolve(global['asyncStorage']);
@@ -338,9 +340,9 @@
                                 driverPromise = new Promise(function (resolve, reject) {
                                     var global = window;
 
-                                    if (typeof global.define === 'function' && global.define.amd) {
+                                    if (_systemImportTransformerModuleTypeHelper === 1) {
                                         global.require(['localStorageWrapper'], resolve, reject);
-                                    } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                                    } else if (_systemImportTransformerModuleTypeHelper === 2) {
                                         resolve(require('./drivers/localstorage'));
                                     } else {
                                         resolve(global['localStorageWrapper']);
@@ -351,9 +353,9 @@
                                 driverPromise = new Promise(function (resolve, reject) {
                                     var global = window;
 
-                                    if (typeof global.define === 'function' && global.define.amd) {
+                                    if (_systemImportTransformerModuleTypeHelper === 1) {
                                         global.require(['webSQLStorage'], resolve, reject);
-                                    } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                                    } else if (_systemImportTransformerModuleTypeHelper === 2) {
                                         resolve(require('./drivers/websql'));
                                     } else {
                                         resolve(global['webSQLStorage']);

@@ -865,12 +865,14 @@
         global.localStorageWrapper = mod.exports;
     }
 })(this, function (exports, module) {
+    'use strict';
+
+    var _systemImportTransformerModuleTypeHelper = (function (global) { return typeof global.define === 'function' && global.define.amd ? 1 : typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component')) ? 2 : 3; })(window);
+
     // If IndexedDB isn't available, we'll fall back to localStorage.
     // Note that this will have considerable performance and storage
     // side-effects (all data will be serialized on save and only data that
     // can be converted to a string via `JSON.stringify()` will be saved).
-    'use strict';
-
     (function () {
         'use strict';
 
@@ -938,9 +940,9 @@
             return new Promise(function (resolve, reject) {
                 var global = window;
 
-                if (typeof global.define === 'function' && global.define.amd) {
+                if (_systemImportTransformerModuleTypeHelper === 1) {
                     global.require(['localforageSerializer'], resolve, reject);
-                } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                } else if (_systemImportTransformerModuleTypeHelper === 2) {
                     resolve(require('./../utils/serializer'));
                 } else {
                     resolve(global['localforageSerializer']);
@@ -1198,6 +1200,10 @@
         global.webSQLStorage = mod.exports;
     }
 })(this, function (exports, module) {
+    'use strict';
+
+    var _systemImportTransformerModuleTypeHelper = (function (global) { return typeof global.define === 'function' && global.define.amd ? 1 : typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component')) ? 2 : 3; })(window);
+
     /*
      * Includes code from:
      *
@@ -1207,8 +1213,6 @@
      * Copyright (c) 2012 Niklas von Hertzen
      * Licensed under the MIT license.
      */
-    'use strict';
-
     (function () {
         'use strict';
 
@@ -1285,9 +1289,9 @@
             return new Promise(function (resolve, reject) {
                 var global = window;
 
-                if (typeof global.define === 'function' && global.define.amd) {
+                if (_systemImportTransformerModuleTypeHelper === 1) {
                     global.require(['localforageSerializer'], resolve, reject);
-                } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                } else if (_systemImportTransformerModuleTypeHelper === 2) {
                     resolve(require('./../utils/serializer'));
                 } else {
                     resolve(global['localforageSerializer']);
@@ -1603,6 +1607,8 @@
 })(this, function (exports, module) {
     'use strict';
 
+    var _systemImportTransformerModuleTypeHelper = (function (global) { return typeof global.define === 'function' && global.define.amd ? 1 : typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component')) ? 2 : 3; })(window);
+
     function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
     (function () {
@@ -1915,9 +1921,9 @@
                                 driverPromise = new Promise(function (resolve, reject) {
                                     var global = window;
 
-                                    if (typeof global.define === 'function' && global.define.amd) {
+                                    if (_systemImportTransformerModuleTypeHelper === 1) {
                                         global.require(['asyncStorage'], resolve, reject);
-                                    } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                                    } else if (_systemImportTransformerModuleTypeHelper === 2) {
                                         resolve(require('./drivers/indexeddb'));
                                     } else {
                                         resolve(global['asyncStorage']);
@@ -1928,9 +1934,9 @@
                                 driverPromise = new Promise(function (resolve, reject) {
                                     var global = window;
 
-                                    if (typeof global.define === 'function' && global.define.amd) {
+                                    if (_systemImportTransformerModuleTypeHelper === 1) {
                                         global.require(['localStorageWrapper'], resolve, reject);
-                                    } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                                    } else if (_systemImportTransformerModuleTypeHelper === 2) {
                                         resolve(require('./drivers/localstorage'));
                                     } else {
                                         resolve(global['localStorageWrapper']);
@@ -1941,9 +1947,9 @@
                                 driverPromise = new Promise(function (resolve, reject) {
                                     var global = window;
 
-                                    if (typeof global.define === 'function' && global.define.amd) {
+                                    if (_systemImportTransformerModuleTypeHelper === 1) {
                                         global.require(['webSQLStorage'], resolve, reject);
-                                    } else if (typeof module !== 'undefined' && (module.exports && typeof require !== 'undefined') || typeof module !== 'undefined' && (module.component && (global.require && global.require.loader === 'component'))) {
+                                    } else if (_systemImportTransformerModuleTypeHelper === 2) {
                                         resolve(require('./drivers/websql'));
                                     } else {
                                         resolve(global['webSQLStorage']);
