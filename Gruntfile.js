@@ -49,33 +49,40 @@ module.exports = exports = function(grunt) {
             }
         },
         browserify: {
+            dist: {
+                options: {
+                    banner: BANNER,
+                    browserifyOptions: {
+                        standalone: 'localforage'
+                    },
+                    plugin: [
+                        ['browserify-derequire']
+                    ]
+                },
+                src: [
+                    'bower_components/es6-promise/promise.js',
+                    'src/localforage.js'
+                ],
+                dest: 'dist/localforage.js'
+            },
+            dist_nopromises: {
+                options: {
+                    banner: BANNER,
+                    browserifyOptions: {
+                        standalone: 'localforage'
+                    },
+                    plugin: [
+                        ['browserify-derequire']
+                    ]
+                },
+                src: [
+                    'src/localforage.js'
+                ],
+                dest: 'dist/localforage.nopromises.js'
+            },
             package_bundling_test: {
                 src: 'test/runner.browserify.js',
                 dest: 'test/localforage.browserify.js'
-            }
-        },
-        concat: {
-            options: {
-                separator: ''
-            },
-            localforage: {
-                files: {
-                    'dist/localforage.js': [
-                        // https://github.com/jakearchibald/es6-promise
-                        'bower_components/es6-promise/promise.js',
-                        'build/es5src/utils/**/*.js',
-                        'build/es5src/drivers/**/*.js',
-                        'build/es5src/localforage.js'
-                    ],
-                    'dist/localforage.nopromises.js': [
-                        'build/es5src/utils/**/*.js',
-                        'build/es5src/drivers/**/*.js',
-                        'build/es5src/localforage.js'
-                    ]
-                },
-                options: {
-                    banner: BANNER
-                }
             }
         },
         connect: {
@@ -226,7 +233,7 @@ module.exports = exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
 
     grunt.registerTask('default', ['build', 'connect', 'watch']);
-    grunt.registerTask('build', ['babel', 'concat', 'es3_safe_recast', 'uglify']);
+    grunt.registerTask('build', ['browserify:dist_nopromises', 'browserify:dist', 'es3_safe_recast', 'uglify']);
     grunt.registerTask('publish', ['build', 'shell:publish-site']);
     grunt.registerTask('serve', ['build', 'connect:test', 'watch']);
     grunt.registerTask('site', ['shell:serve-site']);
@@ -234,6 +241,7 @@ module.exports = exports = function(grunt) {
     // These are the test tasks we run regardless of Sauce Labs credentials.
     var testTasks = [
         'build',
+        'babel',
         'jshint',
         'jscs',
         'shell:component',
