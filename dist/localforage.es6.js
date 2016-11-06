@@ -1,16 +1,3 @@
-/*!
-    localForage -- Offline Storage, Improved
-    Version 1.4.3
-    https://mozilla.github.io/localForage
-    (c) 2013-2016 Mozilla, Apache License 2.0
-*/
-!function e(t,n,r){function o(u,s){if(!n[u]){if(!t[u]){var c="function"==typeof require&&require;if(!s&&c)return c(u,!0);if(i)return i(u,!0);var a=new Error("Cannot find module '"+u+"'");throw (a.code="MODULE_NOT_FOUND", a)}var f=n[u]={exports:{}};t[u][0].call(f.exports,function(e){var n=t[u][1][e];return o(n?n:e)},f,f.exports,e,t,n,r)}return n[u].exports}for(var i="function"==typeof require&&require,u=0;u<r.length;u++)o(r[u]);return o}({1:[function(e,t,n){"use strict";function r(){}function o(e){if("function"!=typeof e)throw new TypeError("resolver must be a function");this.state=w,this.queue=[],this.outcome=void 0,e!==r&&c(this,e)}function i(e,t,n){this.promise=e,"function"==typeof t&&(this.onFulfilled=t,this.callFulfilled=this.otherCallFulfilled),"function"==typeof n&&(this.onRejected=n,this.callRejected=this.otherCallRejected)}function u(e,t,n){d(function(){var r;try{r=t(n)}catch(o){return v.reject(e,o)}r===e?v.reject(e,new TypeError("Cannot resolve promise with itself")):v.resolve(e,r)})}function s(e){var t=e&&e.then;return e&&"object"==typeof e&&"function"==typeof t?function(){t.apply(e,arguments)}:void 0}function c(e,t){function n(t){i||(i=!0,v.reject(e,t))}function r(t){i||(i=!0,v.resolve(e,t))}function o(){t(r,n)}var i=!1,u=a(o);"error"===u.status&&n(u.value)}function a(e,t){var n={};try{n.value=e(t),n.status="success"}catch(r){n.status="error",n.value=r}return n}function f(e){return e instanceof this?e:v.resolve(new this(r),e)}function l(e){var t=new this(r);return v.reject(t,e)}function h(e){function t(e,t){function r(e){u[t]=e,++s!==o||i||(i=!0,v.resolve(a,u))}n.resolve(e).then(r,function(e){i||(i=!0,v.reject(a,e))})}var n=this;if("[object Array]"!==Object.prototype.toString.call(e))return this.reject(new TypeError("must be an array"));var o=e.length,i=!1;if(!o)return this.resolve([]);for(var u=new Array(o),s=0,c=-1,a=new this(r);++c<o;)t(e[c],c);return a}function p(e){function t(e){n.resolve(e).then(function(e){i||(i=!0,v.resolve(s,e))},function(e){i||(i=!0,v.reject(s,e))})}var n=this;if("[object Array]"!==Object.prototype.toString.call(e))return this.reject(new TypeError("must be an array"));var o=e.length,i=!1;if(!o)return this.resolve([]);for(var u=-1,s=new this(r);++u<o;)t(e[u]);return s}var d=e("immediate"),v={},y=["REJECTED"],m=["FULFILLED"],w=["PENDING"];t.exports=n=o,o.prototype["catch"]=function(e){return this.then(null,e)},o.prototype.then=function(e,t){if("function"!=typeof e&&this.state===m||"function"!=typeof t&&this.state===y)return this;var n=new this.constructor(r);if(this.state!==w){var o=this.state===m?e:t;u(n,o,this.outcome)}else this.queue.push(new i(n,e,t));return n},i.prototype.callFulfilled=function(e){v.resolve(this.promise,e)},i.prototype.otherCallFulfilled=function(e){u(this.promise,this.onFulfilled,e)},i.prototype.callRejected=function(e){v.reject(this.promise,e)},i.prototype.otherCallRejected=function(e){u(this.promise,this.onRejected,e)},v.resolve=function(e,t){var n=a(s,t);if("error"===n.status)return v.reject(e,n.value);var r=n.value;if(r)c(e,r);else{e.state=m,e.outcome=t;for(var o=-1,i=e.queue.length;++o<i;)e.queue[o].callFulfilled(t)}return e},v.reject=function(e,t){e.state=y,e.outcome=t;for(var n=-1,r=e.queue.length;++n<r;)e.queue[n].callRejected(t);return e},n.resolve=f,n.reject=l,n.all=h,n.race=p},{immediate:2}],2:[function(e,t,n){(function(e){"use strict";function n(){f=!0;for(var e,t,n=l.length;n;){for(t=l,l=[],e=-1;++e<n;)t[e]();n=l.length}f=!1}function r(e){1!==l.push(e)||f||o()}var o,i=e.MutationObserver||e.WebKitMutationObserver;if(i){var u=0,s=new i(n),c=e.document.createTextNode("");s.observe(c,{characterData:!0}),o=function(){c.data=u=++u%2}}else if(e.setImmediate||"undefined"==typeof e.MessageChannel)o="document"in e&&"onreadystatechange"in e.document.createElement("script")?function(){var t=e.document.createElement("script");t.onreadystatechange=function(){n(),t.onreadystatechange=null,t.parentNode.removeChild(t),t=null},e.document.documentElement.appendChild(t)}:function(){setTimeout(n,0)};else{var a=new e.MessageChannel;a.port1.onmessage=n,o=function(){a.port2.postMessage(0)}}var f,l=[];t.exports=r}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],3:[function(e,t,n){(function(t){"use strict";"function"!=typeof t.Promise&&(t.Promise=e("./lib"))}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./lib":1}]},{},[3]);
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global.localforage = factory());
-}(this, (function () { 'use strict';
-
 function getIDB() {
     /* global indexedDB,webkitIndexedDB,mozIndexedDB,OIndexedDB,msIndexedDB */
     try {
@@ -118,7 +105,7 @@ function executeTwoCallbacks(promise, callback, errorCallback) {
     }
 
     if (typeof errorCallback === 'function') {
-        promise["catch"](errorCallback);
+        promise.catch(errorCallback);
     }
 }
 
@@ -180,7 +167,7 @@ function _checkBlobSupportWithoutCaching(txn) {
             // https://msdn.microsoft.com/en-us/library/hh869301%28v=vs.85%29.aspx
             resolve(matchedEdge || !matchedChrome || parseInt(matchedChrome[1], 10) >= 43);
         };
-    })["catch"](function () {
+    }).catch(function () {
         return false; // error, so assume unsupported
     });
 }
@@ -432,7 +419,7 @@ function _initStorage(options) {
         var forage = dbContext.forages[j];
         if (forage !== self) {
             // Don't wait for itself...
-            initPromises.push(forage._initReady()["catch"](ignoreErrors));
+            initPromises.push(forage._initReady().catch(ignoreErrors));
         }
     }
 
@@ -496,7 +483,7 @@ function getItem(key, callback) {
             req.onerror = function () {
                 reject(req.error);
             };
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -528,7 +515,7 @@ function iterate(iterator, callback) {
                     if (result !== void 0) {
                         resolve(result);
                     } else {
-                        cursor["continue"]();
+                        cursor.continue();
                     }
                 } else {
                     resolve();
@@ -538,7 +525,7 @@ function iterate(iterator, callback) {
             req.onerror = function () {
                 reject(req.error);
             };
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -598,7 +585,7 @@ function setItem(key, value, callback) {
                 var err = req.error ? req.error : req.transaction.error;
                 reject(err);
             };
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -625,7 +612,7 @@ function removeItem(key, callback) {
             // Normally IE won't like `.delete()` and will insist on
             // using `['delete']()`, but we have a build step that
             // fixes this for us now.
-            var req = store["delete"](key);
+            var req = store.delete(key);
             transaction.oncomplete = function () {
                 resolve();
             };
@@ -640,7 +627,7 @@ function removeItem(key, callback) {
                 var err = req.error ? req.error : req.transaction.error;
                 reject(err);
             };
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -665,7 +652,7 @@ function clear(callback) {
                 var err = req.error ? req.error : req.transaction.error;
                 reject(err);
             };
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -688,7 +675,7 @@ function length(callback) {
             req.onerror = function () {
                 reject(req.error);
             };
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -740,7 +727,7 @@ function key(n, callback) {
             req.onerror = function () {
                 reject(req.error);
             };
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -767,13 +754,13 @@ function keys(callback) {
                 }
 
                 keys.push(cursor.key);
-                cursor["continue"]();
+                cursor.continue();
             };
 
             req.onerror = function () {
                 reject(req.error);
             };
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -1093,7 +1080,7 @@ function getItem$1(key, callback) {
                     reject(error);
                 });
             });
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -1137,7 +1124,7 @@ function iterate$1(iterator, callback) {
                     reject(error);
                 });
             });
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -1192,7 +1179,7 @@ function setItem$1(key, value, callback) {
                     });
                 }
             });
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -1219,7 +1206,7 @@ function removeItem$1(key, callback) {
                     reject(error);
                 });
             });
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -1241,7 +1228,7 @@ function clear$1(callback) {
                     reject(error);
                 });
             });
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -1267,7 +1254,7 @@ function length$1(callback) {
                     reject(error);
                 });
             });
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -1295,7 +1282,7 @@ function key$1(n, callback) {
                     reject(error);
                 });
             });
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -1322,7 +1309,7 @@ function keys$1(callback) {
                     reject(error);
                 });
             });
-        })["catch"](reject);
+        }).catch(reject);
     });
 
     executeCallback(promise, callback);
@@ -1690,8 +1677,8 @@ var asyncGenerator = function () {
 
     this._invoke = send;
 
-    if (typeof gen["return"] !== "function") {
-      this["return"] = undefined;
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
     }
   }
 
@@ -1705,11 +1692,11 @@ var asyncGenerator = function () {
     return this._invoke("next", arg);
   };
 
-  AsyncGenerator.prototype["throw"] = function (arg) {
+  AsyncGenerator.prototype.throw = function (arg) {
     return this._invoke("throw", arg);
   };
 
-  AsyncGenerator.prototype["return"] = function (arg) {
+  AsyncGenerator.prototype.return = function (arg) {
     return this._invoke("return", arg);
   };
 
@@ -2102,7 +2089,7 @@ var LocalForage = function () {
                             self._dbInfo = null;
                             self._ready = null;
 
-                            return self.getDriver(driverName).then(extendSelfWithDriver)["catch"](driverPromiseLoop);
+                            return self.getDriver(driverName).then(extendSelfWithDriver).catch(driverPromiseLoop);
                         }
 
                         setDriverToConfig();
@@ -2118,7 +2105,7 @@ var LocalForage = function () {
             // There might be a driver initialization in progress
             // so wait for it to finish in order to avoid a possible
             // race condition to set _dbInfo
-            var oldDriverSetDone = this._driverSet !== null ? this._driverSet["catch"](function () {
+            var oldDriverSetDone = this._driverSet !== null ? this._driverSet.catch(function () {
                 return Promise.resolve();
             }) : Promise.resolve();
 
@@ -2133,7 +2120,7 @@ var LocalForage = function () {
                     self._wrapLibraryMethodsWithReady();
                     self._initDriver = initDriver(supportedDrivers);
                 });
-            })["catch"](function () {
+            }).catch(function () {
                 setDriverToConfig();
                 var error = new Error('No available storage method found.');
                 self._driverSet = Promise.reject(error);
@@ -2191,6 +2178,4 @@ var LocalForage = function () {
 
 var localforage = new LocalForage();
 
-return localforage;
-
-})));
+export default localforage;

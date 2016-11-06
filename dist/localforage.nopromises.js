@@ -4,12 +4,11 @@
     https://mozilla.github.io/localForage
     (c) 2013-2016 Mozilla, Apache License 2.0
 */
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.localforage = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw (f.code="MODULE_NOT_FOUND", f)}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global.localforage = factory());
+}(this, (function () { 'use strict';
 
 function getIDB() {
     /* global indexedDB,webkitIndexedDB,mozIndexedDB,OIndexedDB,msIndexedDB */
@@ -102,13 +101,6 @@ function createBlob(parts, properties) {
     }
 }
 
-// This is CommonJS because lie is an external dependency, so Rollup
-// can just ignore it.
-if (typeof Promise === 'undefined' && typeof _dereq_ !== 'undefined') {
-    _dereq_('lie/polyfill');
-}
-var Promise$1 = Promise;
-
 function executeCallback(promise, callback) {
     if (callback) {
         promise.then(function (result) {
@@ -168,7 +160,7 @@ function _binStringToArrayBuffer(bin) {
 // https://github.com/pouchdb/pouchdb/blob/9c25a23/src/adapters/idb/blobSupport.js
 //
 function _checkBlobSupportWithoutCaching(txn) {
-    return new Promise$1(function (resolve) {
+    return new Promise(function (resolve) {
         var blob = createBlob(['']);
         txn.objectStore(DETECT_BLOB_SUPPORT_STORE).put(blob, 'key');
 
@@ -192,11 +184,11 @@ function _checkBlobSupportWithoutCaching(txn) {
     });
 }
 
-function _checkBlobSupport(idb) {
+function _checkBlobSupport(idb$$1) {
     if (typeof supportsBlobs === 'boolean') {
-        return Promise$1.resolve(supportsBlobs);
+        return Promise.resolve(supportsBlobs);
     }
-    return _checkBlobSupportWithoutCaching(idb).then(function (value) {
+    return _checkBlobSupportWithoutCaching(idb$$1).then(function (value) {
         supportsBlobs = value;
         return supportsBlobs;
     });
@@ -208,7 +200,7 @@ function _deferReadiness(dbInfo) {
     // Create a deferred object representing the current database operation.
     var deferredOperation = {};
 
-    deferredOperation.promise = new Promise$1(function (resolve) {
+    deferredOperation.promise = new Promise(function (resolve) {
         deferredOperation.resolve = resolve;
     });
 
@@ -239,7 +231,7 @@ function _advanceReadiness(dbInfo) {
 }
 
 function _getConnection(dbInfo, upgradeNeeded) {
-    return new Promise$1(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
 
         if (dbInfo.db) {
             if (upgradeNeeded) {
@@ -334,7 +326,7 @@ function _isUpgradeNeeded(dbInfo, defaultVersion) {
 
 // encode a blob for indexeddb engines that don't support blobs
 function _encodeBlob(blob) {
-    return new Promise$1(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
         var reader = new FileReader();
         reader.onerror = reject;
         reader.onloadend = function (e) {
@@ -432,7 +424,7 @@ function _initStorage(options) {
     function ignoreErrors() {
         // Don't handle errors here,
         // just makes sure related localForages aren't pending.
-        return Promise$1.resolve();
+        return Promise.resolve();
     }
 
     for (var j = 0; j < dbContext.forages.length; j++) {
@@ -448,7 +440,7 @@ function _initStorage(options) {
 
     // Initialize the connection process only when
     // all the related localForages aren't pending.
-    return Promise$1.all(initPromises).then(function () {
+    return Promise.all(initPromises).then(function () {
         dbInfo.db = dbContext.db;
         // Get the connection or open a new one without upgrade.
         return _getOriginalConnection(dbInfo);
@@ -483,7 +475,7 @@ function getItem(key, callback) {
         key = String(key);
     }
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             var store = dbInfo.db.transaction(dbInfo.storeName, 'readonly').objectStore(dbInfo.storeName);
@@ -514,7 +506,7 @@ function getItem(key, callback) {
 function iterate(iterator, callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             var store = dbInfo.db.transaction(dbInfo.storeName, 'readonly').objectStore(dbInfo.storeName);
@@ -562,7 +554,7 @@ function setItem(key, value, callback) {
         key = String(key);
     }
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         var dbInfo;
         self.ready().then(function () {
             dbInfo = self._dbInfo;
@@ -621,7 +613,7 @@ function removeItem(key, callback) {
         key = String(key);
     }
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             var transaction = dbInfo.db.transaction(dbInfo.storeName, 'readwrite');
@@ -657,7 +649,7 @@ function removeItem(key, callback) {
 function clear(callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             var transaction = dbInfo.db.transaction(dbInfo.storeName, 'readwrite');
@@ -682,7 +674,7 @@ function clear(callback) {
 function length(callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             var store = dbInfo.db.transaction(dbInfo.storeName, 'readonly').objectStore(dbInfo.storeName);
@@ -705,7 +697,7 @@ function length(callback) {
 function key(n, callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         if (n < 0) {
             resolve(null);
 
@@ -757,7 +749,7 @@ function key(n, callback) {
 function keys(callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             var store = dbInfo.db.transaction(dbInfo.storeName, 'readonly').objectStore(dbInfo.storeName);
@@ -1048,7 +1040,7 @@ function _initStorage$1(options) {
         }
     }
 
-    var dbInfoPromise = new Promise$1(function (resolve, reject) {
+    var dbInfoPromise = new Promise(function (resolve, reject) {
         // Open the database; the openDatabase API will automatically
         // create it for us if it doesn't exist.
         try {
@@ -1081,7 +1073,7 @@ function getItem$1(key, callback) {
         key = String(key);
     }
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             dbInfo.db.transaction(function (t) {
@@ -1110,7 +1102,7 @@ function getItem$1(key, callback) {
 function iterate$1(iterator, callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
 
@@ -1160,7 +1152,7 @@ function setItem$1(key, value, callback) {
         key = String(key);
     }
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             // The localStorage API doesn't return undefined values in an
             // "expected" way, so undefined is always cast to null in all
@@ -1215,7 +1207,7 @@ function removeItem$1(key, callback) {
         key = String(key);
     }
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             dbInfo.db.transaction(function (t) {
@@ -1238,7 +1230,7 @@ function removeItem$1(key, callback) {
 function clear$1(callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             dbInfo.db.transaction(function (t) {
@@ -1260,7 +1252,7 @@ function clear$1(callback) {
 function length$1(callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             dbInfo.db.transaction(function (t) {
@@ -1291,7 +1283,7 @@ function length$1(callback) {
 function key$1(n, callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             dbInfo.db.transaction(function (t) {
@@ -1312,7 +1304,7 @@ function key$1(n, callback) {
 function keys$1(callback) {
     var self = this;
 
-    var promise = new Promise$1(function (resolve, reject) {
+    var promise = new Promise(function (resolve, reject) {
         self.ready().then(function () {
             var dbInfo = self._dbInfo;
             dbInfo.db.transaction(function (t) {
@@ -1349,6 +1341,11 @@ var webSQLStorage = {
     keys: keys$1
 };
 
+// If IndexedDB isn't available, we'll fall back to localStorage.
+// Note that this will have considerable performance and storage
+// side-effects (all data will be serialized on save and only data that
+// can be converted to a string via `JSON.stringify()` will be saved).
+
 // Config the localStorage backend, using options set in the config.
 function _initStorage$2(options) {
     var self = this;
@@ -1368,7 +1365,7 @@ function _initStorage$2(options) {
     self._dbInfo = dbInfo;
     dbInfo.serializer = localforageSerializer;
 
-    return Promise$1.resolve();
+    return Promise.resolve();
 }
 
 // Remove all keys from the datastore, effectively destroying all data in
@@ -1564,7 +1561,7 @@ function setItem$2(key, value, callback) {
         // Save the original value to pass to the callback.
         var originalValue = value;
 
-        return new Promise$1(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             var dbInfo = self._dbInfo;
             dbInfo.serializer.serialize(value, function (value, error) {
                 if (error) {
@@ -1602,6 +1599,226 @@ var localStorageWrapper = {
     length: length$2,
     key: key$2,
     keys: keys$2
+};
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+
+
+
+
+var asyncGenerator = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
+
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen["return"] !== "function") {
+      this["return"] = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype["throw"] = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype["return"] = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
+
+
+
+
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+
+
+
+
+
+
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var set = function set(object, property, value, receiver) {
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent !== null) {
+      set(parent, property, value, receiver);
+    }
+  } else if ("value" in desc && desc.writable) {
+    desc.value = value;
+  } else {
+    var setter = desc.set;
+
+    if (setter !== undefined) {
+      setter.call(receiver, value);
+    }
+  }
+
+  return value;
 };
 
 // Custom drivers are stored here when `defineDriver()` is called.
@@ -1686,7 +1903,7 @@ function isLibraryDriver(driverName) {
 
 var LocalForage = function () {
     function LocalForage(options) {
-        _classCallCheck(this, LocalForage);
+        classCallCheck(this, LocalForage);
 
         this.INDEXEDDB = DriverType.INDEXEDDB;
         this.LOCALSTORAGE = DriverType.LOCALSTORAGE;
@@ -1709,248 +1926,261 @@ var LocalForage = function () {
     // values.
 
 
-    LocalForage.prototype.config = function config(options) {
-        // If the options argument is an object, we use it to set values.
-        // Otherwise, we return either a specified config value or all
-        // config values.
-        if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) === 'object') {
-            // If localforage is ready and fully initialized, we can't set
-            // any new configuration values. Instead, we return an error.
-            if (this._ready) {
-                return new Error("Can't call config() after localforage " + 'has been used.');
-            }
-
-            for (var i in options) {
-                if (i === 'storeName') {
-                    options[i] = options[i].replace(/\W/g, '_');
+    createClass(LocalForage, [{
+        key: 'config',
+        value: function config(options) {
+            // If the options argument is an object, we use it to set values.
+            // Otherwise, we return either a specified config value or all
+            // config values.
+            if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) === 'object') {
+                // If localforage is ready and fully initialized, we can't set
+                // any new configuration values. Instead, we return an error.
+                if (this._ready) {
+                    return new Error("Can't call config() after localforage " + 'has been used.');
                 }
 
-                this._config[i] = options[i];
-            }
+                for (var i in options) {
+                    if (i === 'storeName') {
+                        options[i] = options[i].replace(/\W/g, '_');
+                    }
 
-            // after all config options are set and
-            // the driver option is used, try setting it
-            if ('driver' in options && options.driver) {
-                this.setDriver(this._config.driver);
-            }
+                    this._config[i] = options[i];
+                }
 
-            return true;
-        } else if (typeof options === 'string') {
-            return this._config[options];
-        } else {
-            return this._config;
+                // after all config options are set and
+                // the driver option is used, try setting it
+                if ('driver' in options && options.driver) {
+                    this.setDriver(this._config.driver);
+                }
+
+                return true;
+            } else if (typeof options === 'string') {
+                return this._config[options];
+            } else {
+                return this._config;
+            }
         }
-    };
 
-    // Used to define a custom driver, shared across all instances of
-    // localForage.
+        // Used to define a custom driver, shared across all instances of
+        // localForage.
 
+    }, {
+        key: 'defineDriver',
+        value: function defineDriver(driverObject, callback, errorCallback) {
+            var promise = new Promise(function (resolve, reject) {
+                try {
+                    var driverName = driverObject._driver;
+                    var complianceError = new Error('Custom driver not compliant; see ' + 'https://mozilla.github.io/localForage/#definedriver');
+                    var namingError = new Error('Custom driver name already in use: ' + driverObject._driver);
 
-    LocalForage.prototype.defineDriver = function defineDriver(driverObject, callback, errorCallback) {
-        var promise = new Promise$1(function (resolve, reject) {
-            try {
-                var driverName = driverObject._driver;
-                var complianceError = new Error('Custom driver not compliant; see ' + 'https://mozilla.github.io/localForage/#definedriver');
-                var namingError = new Error('Custom driver name already in use: ' + driverObject._driver);
-
-                // A driver name should be defined and not overlap with the
-                // library-defined, default drivers.
-                if (!driverObject._driver) {
-                    reject(complianceError);
-                    return;
-                }
-                if (isLibraryDriver(driverObject._driver)) {
-                    reject(namingError);
-                    return;
-                }
-
-                var customDriverMethods = LibraryMethods.concat('_initStorage');
-                for (var i = 0; i < customDriverMethods.length; i++) {
-                    var customDriverMethod = customDriverMethods[i];
-                    if (!customDriverMethod || !driverObject[customDriverMethod] || typeof driverObject[customDriverMethod] !== 'function') {
+                    // A driver name should be defined and not overlap with the
+                    // library-defined, default drivers.
+                    if (!driverObject._driver) {
                         reject(complianceError);
                         return;
                     }
-                }
-
-                var supportPromise = Promise$1.resolve(true);
-                if ('_support' in driverObject) {
-                    if (driverObject._support && typeof driverObject._support === 'function') {
-                        supportPromise = driverObject._support();
-                    } else {
-                        supportPromise = Promise$1.resolve(!!driverObject._support);
-                    }
-                }
-
-                supportPromise.then(function (supportResult) {
-                    driverSupport[driverName] = supportResult;
-                    CustomDrivers[driverName] = driverObject;
-                    resolve();
-                }, reject);
-            } catch (e) {
-                reject(e);
-            }
-        });
-
-        executeTwoCallbacks(promise, callback, errorCallback);
-        return promise;
-    };
-
-    LocalForage.prototype.driver = function driver() {
-        return this._driver || null;
-    };
-
-    LocalForage.prototype.getDriver = function getDriver(driverName, callback, errorCallback) {
-        var self = this;
-        var getDriverPromise = Promise$1.resolve().then(function () {
-            if (isLibraryDriver(driverName)) {
-                switch (driverName) {
-                    case self.INDEXEDDB:
-                        return asyncStorage;
-                    case self.LOCALSTORAGE:
-                        return localStorageWrapper;
-                    case self.WEBSQL:
-                        return webSQLStorage;
-                }
-            } else if (CustomDrivers[driverName]) {
-                return CustomDrivers[driverName];
-            } else {
-                throw new Error('Driver not found.');
-            }
-        });
-        executeTwoCallbacks(getDriverPromise, callback, errorCallback);
-        return getDriverPromise;
-    };
-
-    LocalForage.prototype.getSerializer = function getSerializer(callback) {
-        var serializerPromise = Promise$1.resolve(localforageSerializer);
-        executeTwoCallbacks(serializerPromise, callback);
-        return serializerPromise;
-    };
-
-    LocalForage.prototype.ready = function ready(callback) {
-        var self = this;
-
-        var promise = self._driverSet.then(function () {
-            if (self._ready === null) {
-                self._ready = self._initDriver();
-            }
-
-            return self._ready;
-        });
-
-        executeTwoCallbacks(promise, callback, callback);
-        return promise;
-    };
-
-    LocalForage.prototype.setDriver = function setDriver(drivers, callback, errorCallback) {
-        var self = this;
-
-        if (!isArray(drivers)) {
-            drivers = [drivers];
-        }
-
-        var supportedDrivers = this._getSupportedDrivers(drivers);
-
-        function setDriverToConfig() {
-            self._config.driver = self.driver();
-        }
-
-        function extendSelfWithDriver(driver) {
-            self._extend(driver);
-            setDriverToConfig();
-
-            self._ready = self._initStorage(self._config);
-            return self._ready;
-        }
-
-        function initDriver(supportedDrivers) {
-            return function () {
-                var currentDriverIndex = 0;
-
-                function driverPromiseLoop() {
-                    while (currentDriverIndex < supportedDrivers.length) {
-                        var driverName = supportedDrivers[currentDriverIndex];
-                        currentDriverIndex++;
-
-                        self._dbInfo = null;
-                        self._ready = null;
-
-                        return self.getDriver(driverName).then(extendSelfWithDriver)["catch"](driverPromiseLoop);
+                    if (isLibraryDriver(driverObject._driver)) {
+                        reject(namingError);
+                        return;
                     }
 
-                    setDriverToConfig();
-                    var error = new Error('No available storage method found.');
-                    self._driverSet = Promise$1.reject(error);
-                    return self._driverSet;
+                    var customDriverMethods = LibraryMethods.concat('_initStorage');
+                    for (var i = 0; i < customDriverMethods.length; i++) {
+                        var customDriverMethod = customDriverMethods[i];
+                        if (!customDriverMethod || !driverObject[customDriverMethod] || typeof driverObject[customDriverMethod] !== 'function') {
+                            reject(complianceError);
+                            return;
+                        }
+                    }
+
+                    var supportPromise = Promise.resolve(true);
+                    if ('_support' in driverObject) {
+                        if (driverObject._support && typeof driverObject._support === 'function') {
+                            supportPromise = driverObject._support();
+                        } else {
+                            supportPromise = Promise.resolve(!!driverObject._support);
+                        }
+                    }
+
+                    supportPromise.then(function (supportResult) {
+                        driverSupport[driverName] = supportResult;
+                        CustomDrivers[driverName] = driverObject;
+                        resolve();
+                    }, reject);
+                } catch (e) {
+                    reject(e);
                 }
-
-                return driverPromiseLoop();
-            };
-        }
-
-        // There might be a driver initialization in progress
-        // so wait for it to finish in order to avoid a possible
-        // race condition to set _dbInfo
-        var oldDriverSetDone = this._driverSet !== null ? this._driverSet["catch"](function () {
-            return Promise$1.resolve();
-        }) : Promise$1.resolve();
-
-        this._driverSet = oldDriverSetDone.then(function () {
-            var driverName = supportedDrivers[0];
-            self._dbInfo = null;
-            self._ready = null;
-
-            return self.getDriver(driverName).then(function (driver) {
-                self._driver = driver._driver;
-                setDriverToConfig();
-                self._wrapLibraryMethodsWithReady();
-                self._initDriver = initDriver(supportedDrivers);
             });
-        })["catch"](function () {
-            setDriverToConfig();
-            var error = new Error('No available storage method found.');
-            self._driverSet = Promise$1.reject(error);
-            return self._driverSet;
-        });
 
-        executeTwoCallbacks(this._driverSet, callback, errorCallback);
-        return this._driverSet;
-    };
+            executeTwoCallbacks(promise, callback, errorCallback);
+            return promise;
+        }
+    }, {
+        key: 'driver',
+        value: function driver() {
+            return this._driver || null;
+        }
+    }, {
+        key: 'getDriver',
+        value: function getDriver(driverName, callback, errorCallback) {
+            var self = this;
+            var getDriverPromise = Promise.resolve().then(function () {
+                if (isLibraryDriver(driverName)) {
+                    switch (driverName) {
+                        case self.INDEXEDDB:
+                            return asyncStorage;
+                        case self.LOCALSTORAGE:
+                            return localStorageWrapper;
+                        case self.WEBSQL:
+                            return webSQLStorage;
+                    }
+                } else if (CustomDrivers[driverName]) {
+                    return CustomDrivers[driverName];
+                } else {
+                    throw new Error('Driver not found.');
+                }
+            });
+            executeTwoCallbacks(getDriverPromise, callback, errorCallback);
+            return getDriverPromise;
+        }
+    }, {
+        key: 'getSerializer',
+        value: function getSerializer(callback) {
+            var serializerPromise = Promise.resolve(localforageSerializer);
+            executeTwoCallbacks(serializerPromise, callback);
+            return serializerPromise;
+        }
+    }, {
+        key: 'ready',
+        value: function ready(callback) {
+            var self = this;
 
-    LocalForage.prototype.supports = function supports(driverName) {
-        return !!driverSupport[driverName];
-    };
+            var promise = self._driverSet.then(function () {
+                if (self._ready === null) {
+                    self._ready = self._initDriver();
+                }
 
-    LocalForage.prototype._extend = function _extend(libraryMethodsAndProperties) {
-        extend(this, libraryMethodsAndProperties);
-    };
+                return self._ready;
+            });
 
-    LocalForage.prototype._getSupportedDrivers = function _getSupportedDrivers(drivers) {
-        var supportedDrivers = [];
-        for (var i = 0, len = drivers.length; i < len; i++) {
-            var driverName = drivers[i];
-            if (this.supports(driverName)) {
-                supportedDrivers.push(driverName);
+            executeTwoCallbacks(promise, callback, callback);
+            return promise;
+        }
+    }, {
+        key: 'setDriver',
+        value: function setDriver(drivers, callback, errorCallback) {
+            var self = this;
+
+            if (!isArray(drivers)) {
+                drivers = [drivers];
+            }
+
+            var supportedDrivers = this._getSupportedDrivers(drivers);
+
+            function setDriverToConfig() {
+                self._config.driver = self.driver();
+            }
+
+            function extendSelfWithDriver(driver) {
+                self._extend(driver);
+                setDriverToConfig();
+
+                self._ready = self._initStorage(self._config);
+                return self._ready;
+            }
+
+            function initDriver(supportedDrivers) {
+                return function () {
+                    var currentDriverIndex = 0;
+
+                    function driverPromiseLoop() {
+                        while (currentDriverIndex < supportedDrivers.length) {
+                            var driverName = supportedDrivers[currentDriverIndex];
+                            currentDriverIndex++;
+
+                            self._dbInfo = null;
+                            self._ready = null;
+
+                            return self.getDriver(driverName).then(extendSelfWithDriver)["catch"](driverPromiseLoop);
+                        }
+
+                        setDriverToConfig();
+                        var error = new Error('No available storage method found.');
+                        self._driverSet = Promise.reject(error);
+                        return self._driverSet;
+                    }
+
+                    return driverPromiseLoop();
+                };
+            }
+
+            // There might be a driver initialization in progress
+            // so wait for it to finish in order to avoid a possible
+            // race condition to set _dbInfo
+            var oldDriverSetDone = this._driverSet !== null ? this._driverSet["catch"](function () {
+                return Promise.resolve();
+            }) : Promise.resolve();
+
+            this._driverSet = oldDriverSetDone.then(function () {
+                var driverName = supportedDrivers[0];
+                self._dbInfo = null;
+                self._ready = null;
+
+                return self.getDriver(driverName).then(function (driver) {
+                    self._driver = driver._driver;
+                    setDriverToConfig();
+                    self._wrapLibraryMethodsWithReady();
+                    self._initDriver = initDriver(supportedDrivers);
+                });
+            })["catch"](function () {
+                setDriverToConfig();
+                var error = new Error('No available storage method found.');
+                self._driverSet = Promise.reject(error);
+                return self._driverSet;
+            });
+
+            executeTwoCallbacks(this._driverSet, callback, errorCallback);
+            return this._driverSet;
+        }
+    }, {
+        key: 'supports',
+        value: function supports(driverName) {
+            return !!driverSupport[driverName];
+        }
+    }, {
+        key: '_extend',
+        value: function _extend(libraryMethodsAndProperties) {
+            extend(this, libraryMethodsAndProperties);
+        }
+    }, {
+        key: '_getSupportedDrivers',
+        value: function _getSupportedDrivers(drivers) {
+            var supportedDrivers = [];
+            for (var i = 0, len = drivers.length; i < len; i++) {
+                var driverName = drivers[i];
+                if (this.supports(driverName)) {
+                    supportedDrivers.push(driverName);
+                }
+            }
+            return supportedDrivers;
+        }
+    }, {
+        key: '_wrapLibraryMethodsWithReady',
+        value: function _wrapLibraryMethodsWithReady() {
+            // Add a stub for each driver API method that delays the call to the
+            // corresponding driver method until localForage is ready. These stubs
+            // will be replaced by the driver methods as soon as the driver is
+            // loaded, so there is no performance impact.
+            for (var i = 0; i < LibraryMethods.length; i++) {
+                callWhenReady(this, LibraryMethods[i]);
             }
         }
-        return supportedDrivers;
-    };
-
-    LocalForage.prototype._wrapLibraryMethodsWithReady = function _wrapLibraryMethodsWithReady() {
-        // Add a stub for each driver API method that delays the call to the
-        // corresponding driver method until localForage is ready. These stubs
-        // will be replaced by the driver methods as soon as the driver is
-        // loaded, so there is no performance impact.
-        for (var i = 0; i < LibraryMethods.length; i++) {
-            callWhenReady(this, LibraryMethods[i]);
+    }, {
+        key: 'createInstance',
+        value: function createInstance(options) {
+            return new LocalForage(options);
         }
-    };
-
-    LocalForage.prototype.createInstance = function createInstance(options) {
-        return new LocalForage(options);
-    };
-
+    }]);
     return LocalForage;
 }();
 
@@ -1958,9 +2188,8 @@ var LocalForage = function () {
 // global. It's extended by pulling in one of our other libraries.
 
 
-var localforage_js = new LocalForage();
+var localforage = new LocalForage();
 
-module.exports = localforage_js;
+return localforage;
 
-},{"undefined":undefined}]},{},[1])(1)
-});
+})));
