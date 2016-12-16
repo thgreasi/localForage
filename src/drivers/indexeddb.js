@@ -677,6 +677,94 @@ function keys(callback) {
     return promise;
 }
 
+function dropInstance(options, callback) {
+    callback = arguments.length === 1 && typeof arguments[0] === 'function' ? arguments[0] :
+        arguments.length >= 2 && typeof arguments[1] === 'function' ? arguments[1] :
+        undefined;
+
+    var currentConfig = this.config();
+    options = options || {};
+    if (!options.name) {
+        options.name = options.name || currentConfig.name;
+        options.storeName = options.storeName || currentConfig.storeName;
+    }
+
+    var self = this;
+    var promise;
+    if (options.name && !options.storeName) {
+        promise = new Promise(function(resolve, reject) {
+            var req = idb.deleteDatabase(options.name);
+
+            req.onblocked = function() {
+                reject(req.error);
+            };
+
+            // req.onupgradeneeded = function() {
+            //     reject(req.error);
+            // };
+
+            req.onerror = function() {
+                reject(req.error);
+            };
+             
+            req.onsuccess = function() {
+                resolve();
+            };
+        });
+    } else if (options.name && options.storeName) {
+        var dbPromise = options.name === currentConfig.name ?
+            Promise.resolve(self._dbInfo.db) :
+            _getOriginalConnection(options);
+
+        return dbPromise.then(function(db) {
+            if (!db.objectStoreNames.contains(options.storeName)) {
+                return;
+            }
+
+            return new Promise(function(resolve, reject) {
+                db.close();
+                var openreq = idb.open(options.name, db.version + 1);
+
+                openreq.onblocked = function() {
+                    reject(openreq.error);
+                };
+
+                openreq.onupgradeneeded = function() {
+                    db.deleteObjectStore(options.storeName);
+                };
+
+                openreq.onerror = function() {
+                    reject(openreq.error);
+                };
+
+                openreq.onsuccess = function() {
+                    resolve();
+                };
+            });
+
+
+            // var tmpDbInfo = {};
+            // for (var i in options) {
+            //     tmpDbInfo[i] = options[i];
+            // }
+            // tmpDbInfo.db = db;
+
+            // if (_isUpgradeNeeded(tmpDbInfo, self._defaultConfig.version)) {
+            //     // Reopen the database for upgrading.
+            //     return _getUpgradedConnection(tmpDbInfo);
+            // }
+            // return db;
+        })/*.then(function(db) {
+            db.deleteObjectStore(options.storeName);
+        })*/;
+    } else {
+        promise = Promise.reject('Invalid arguments');
+    }
+
+    executeCallback(promise, callback);
+    return promise;
+}
+
 var asyncStorage = {
     _driver: 'asyncStorage',
     _initStorage: _initStorage,
@@ -687,6 +775,7 @@ var asyncStorage = {
     clear: clear,
     length: length,
     key: key,
-    keys: keys
+    keys: keys,
+    dropInstance: dropInstance
 };
 export default asyncStorage;

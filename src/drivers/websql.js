@@ -335,6 +335,103 @@ function keys(callback) {
     return promise;
 }
 
+function dropInstance(options, callback) {
+    callback = arguments.length === 1 && typeof arguments[0] === 'function' ? arguments[0] :
+        arguments.length >= 2 && typeof arguments[1] === 'function' ? arguments[1] :
+        undefined;
+
+    var currentConfig = this.config();
+    options = options || {};
+    if (!options.name) {
+        options.name = options.name || currentConfig.name;
+        options.storeName = options.storeName || currentConfig.storeName;
+    }
+
+    var self = this;
+    var promise;
+    if (options.name) {
+        promise = new Promise(function(resolve, reject) {
+            var db;
+            if (options.name === currentConfig.name) {
+                // use the db reference of the current instance
+                db = self._dbInfo.db;
+            } else {
+                try {
+                    db = openDatabase(options.name, '', '', 0);
+                } catch (e) {
+                    return reject(e);
+                }
+            }
+
+            if (!options.storeName) {
+                // drop all database tables
+                // https://www.w3.org/TR/webdatabase/#databases
+                // > There is no way to enumerate or delete the databases available for an origin from this API.
+                return new Promise(function(resolve, reject) {
+                    db.transaction(function(t) {
+                        t.executeSql(`SELECT name FROM sqlite_master
+                                      WHERE type='table' AND name <> '__WebKitDatabaseInfoTable__'`,
+                                     [], function(t, results) {
+                        var storeNames = [];
+
+                        for (var i = 0; i < results.rows.length; i++) {
+                            storeNames.push(results.rows.item(i).name);
+                        }
+
+                        resolve({
+                            db,
+                            storeNames
+                        });
+                    }, function(t, error) {
+                            reject(error);
+                        });
+                    }, function(sqlError) {
+                        reject(sqlError);
+                    });
+                });
+            } else {
+                return {
+                    db,
+                    storeNames: [options.storeName]
+                };
+            }
+        }).then(function(operationInfo) {
+            return new Promise(function(resolve, reject) {
+                operationInfo.db.transaction(function(t) {
+                    function dropTable(storeName) {
+                        return new Promise(function(resolve, reject) {
+                            t.executeSql(`DROP TABLE IF EXISTS ${storeName}`,
+                                         [], function() {
+                                resolve();
+                            }, function(t, error) {
+                                reject(error);
+                            });
+                        });
+                    }
+
+                    var operations = [];
+                    for (var i = 0, len = operationInfo.storeNames.length; i < len; i++) {
+                        operations.push(dropTable(operationInfo.storeNames[i]));
+                    }
+
+                    Promise.all(operations).then(function() {
+                        resolve();
+                    }).catch(function(e) {
+                        reject(e);
+                    });
+                }, function(sqlError) {
+                    reject(sqlError);
+                });
+            });
+        });
+    } else {
+        promise = Promise.reject('Invalid arguments');
+    }
+
+    executeCallback(promise, callback);
+    return promise;
+}
+
 var webSQLStorage = {
     _driver: 'webSQLStorage',
     _initStorage: _initStorage,
@@ -345,7 +442,8 @@ var webSQLStorage = {
     clear: clear,
     length: length,
     key: key,
-    keys: keys
+    keys: keys,
+    dropInstance: dropInstance
 };
 
 export default webSQLStorage;

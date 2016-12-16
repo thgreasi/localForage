@@ -7,6 +7,15 @@ import serializer from '../utils/serializer';
 import Promise from '../utils/promise';
 import executeCallback from '../utils/executeCallback';
 
+function _getKeyPrefix(options, defaultConfig) {
+    var keyPrefix = options.name + '/';
+
+    if (options.storeName !== defaultConfig.storeName) {
+        keyPrefix += options.storeName + '/';
+    }
+    return keyPrefix;
+}
+
 // Config the localStorage backend, using options set in the config.
 function _initStorage(options) {
     var self = this;
@@ -17,11 +26,7 @@ function _initStorage(options) {
         }
     }
 
-    dbInfo.keyPrefix = dbInfo.name + '/';
-
-    if (dbInfo.storeName !== self._defaultConfig.storeName) {
-        dbInfo.keyPrefix += dbInfo.storeName + '/';
-    }
+    dbInfo.keyPrefix = _getKeyPrefix(options, self._defaultConfig);
 
     self._dbInfo = dbInfo;
     dbInfo.serializer = serializer;
@@ -253,6 +258,41 @@ function setItem(key, value, callback) {
     return promise;
 }
 
+function dropInstance(options, callback) {
+    callback = arguments.length === 1 && typeof arguments[0] === 'function' ? arguments[0] :
+        arguments.length >= 2 && typeof arguments[1] === 'function' ? arguments[1] :
+        undefined;
+
+    options = options || {};
+    if (!options.name) {
+        var currentConfig = this.config();
+        options.name = options.name || currentConfig.name;
+        options.storeName = options.storeName || currentConfig.storeName;
+    }
+
+    var self = this;
+    var promise;
+    if (!options.name) {
+        promise = Promise.reject('Invalid arguments');
+    } else {
+        promise = new Promise(function(resolve) {
+            var keyPrefix = _getKeyPrefix(options, self._defaultConfig);
+            for (var i = localStorage.length - 1; i >= 0; i--) {
+                var key = localStorage.key(i);
+
+                if (key.indexOf(keyPrefix) === 0) {
+                    localStorage.removeItem(key);
+                }
+            }
+
+            resolve();
+        });
+    }
+
+    executeCallback(promise, callback);
+    return promise;
+}
+
 var localStorageWrapper = {
     _driver: 'localStorageWrapper',
     _initStorage: _initStorage,
@@ -264,7 +304,8 @@ var localStorageWrapper = {
     clear: clear,
     length: length,
     key: key,
-    keys: keys
+    keys: keys,
+    dropInstance: dropInstance
 };
 
 export default localStorageWrapper;
