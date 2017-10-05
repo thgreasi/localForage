@@ -64,6 +64,7 @@
     "url": "http://github.com/localForage/localForage/issues"
   },
   "dependencies": {
+    "common-tags": "^1.4.0",
     "lie": "3.0.2"
   }
 }
